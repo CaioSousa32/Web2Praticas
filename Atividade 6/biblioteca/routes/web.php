@@ -7,9 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PublisherController;
 
 // Rota para a página inicial
-Route::get('/', function () {
-    return view('/books');
-});
+Route::get('/', [BookController::class, 'index']);
 
 // Rotas para Books
 Route::resource('books', BookController::class);
