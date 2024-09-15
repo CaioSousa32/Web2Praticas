@@ -7,6 +7,7 @@ use App\Models\Author;
 use App\Models\Publisher;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -42,7 +43,14 @@ class BookController extends Controller
             'publisher_id' => 'required|integer',
             'published_year' => 'required|integer',
             'categories' => 'required|array',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validação da imagem
         ]);
+
+        // Verifica se uma imagem de capa foi enviada e a armazena
+        if ($request->hasFile('cover_image')) {
+            $imagePath = $request->file('cover_image')->store('book_covers', 'public');
+            $validatedData['cover_image'] = $imagePath; // Adiciona o caminho da imagem aos dados validados
+        }
 
         $book = Book::create($validatedData);
         $book->categories()->attach($request->categories);
@@ -69,9 +77,23 @@ class BookController extends Controller
             'publisher_id' => 'required|integer',
             'published_year' => 'required|integer',
             'categories' => 'required|array',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validação da imagem
         ]);
 
         $book = Book::findOrFail($id);
+
+        // Verifica se uma nova imagem foi enviada
+        if ($request->hasFile('cover_image')) {
+            // Remove a imagem antiga, se existir
+            if ($book->cover_image && Storage::disk('public')->exists($book->cover_image)) {
+                Storage::disk('public')->delete($book->cover_image);
+            }
+
+            // Armazena a nova imagem
+            $imagePath = $request->file('cover_image')->store('book_covers', 'public');
+            $validatedData['cover_image'] = $imagePath;
+        }
+
         $book->update($validatedData);
         $book->categories()->sync($request->categories);
 
@@ -82,6 +104,12 @@ class BookController extends Controller
     public function destroy($id)
     {
         $book = Book::findOrFail($id);
+
+        // Remove a imagem de capa associada, se existir
+        if ($book->cover_image && Storage::disk('public')->exists($book->cover_image)) {
+            Storage::disk('public')->delete($book->cover_image);
+        }
+
         $book->categories()->detach();
         $book->delete();
 
