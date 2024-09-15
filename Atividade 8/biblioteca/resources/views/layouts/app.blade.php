@@ -73,6 +73,16 @@
                         <a class="dropdown-item" href="{{ route('publishers.create') }}">Adicionar Editora</a>
                     </div>
                 </li>
+
+                <!-- Dropdown para Users -->
+                <li class="nav-item dropdown">
+                    <a id="publishersDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Usuários
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="publishersDropdown">
+                        <a class="dropdown-item" href="{{ route('users.index') }}">Gerenciar papéis de Usuários (Somente admin)</a>
+                    </div>
+                </li>
             </ul>
 
             <!-- Right Side Of Navbar -->

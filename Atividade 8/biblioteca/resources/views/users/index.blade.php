@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1>Gerenciar Papéis de Usuários</h1>
+        <h1>Gerenciar papéis de Usuários</h1>
 
         @if (session('success'))
             <div class="alert alert-success">
